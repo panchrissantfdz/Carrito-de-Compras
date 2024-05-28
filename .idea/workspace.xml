@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="4431a039-d135-49fe-815d-2fa3aa19ca0f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/CarritodeC/Imágenes/Chips.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CarritodeC/Imágenes/Chokis.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CarritodeC/Imágenes/Coca.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CarritodeC/Imágenes/Corona.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CarritodeC/Imágenes/Doritos.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CarritodeC/Imágenes/Gansito.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CarritodeC/Imágenes/Leche.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CarritodeC/Imágenes/Nescafe.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CarritodeC/Imágenes/Pepsi.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CarritodeC/Imágenes/Sabritas.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CarritodeC/src/main/java/Servidor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CarritodeC/target/classes/Servidor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CarritodeC/src/main/java/CarritodeC.java" beforeDir="false" afterPath="$PROJECT_DIR$/CarritodeC/src/main/java/CarritodeC.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CarritodeC/src/main/java/Producto.java" beforeDir="false" afterPath="$PROJECT_DIR$/CarritodeC/src/main/java/Producto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CarritodeC/target/classes/CarritodeC.class" beforeDir="false" afterPath="$PROJECT_DIR$/CarritodeC/target/classes/CarritodeC.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CarritodeC/target/classes/Cliente.class" beforeDir="false" afterPath="$PROJECT_DIR$/CarritodeC/target/classes/Cliente.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CarritodeC/target/classes/Producto.class" beforeDir="false" afterPath="$PROJECT_DIR$/CarritodeC/target/classes/Producto.class" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2h1jqYpoNw2E8LuMc1kbDUTGPxc" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/kevin/Downloads/github-copilot-intellij-1.5.4.5571.zip&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  }
+}</component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4431a039-d135-49fe-815d-2fa3aa19ca0f" name="Changes" comment="" />
+      <created>1716768671787</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1716768671787</updated>
+    </task>
+    <servers />
+  </component>
+</project>
