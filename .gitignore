@@ -1,0 +1,6 @@
+#ignorar la carpetas
+/.idea
+/shelf/
+/workspace.xml
+/.xml
+/.git
