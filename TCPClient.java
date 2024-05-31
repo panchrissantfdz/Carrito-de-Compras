@@ -1,6 +1,9 @@
 import java.io.*;
 import java.net.*;
-
+import javax.swing.JOptionPane;
+import java.lang.Iterable;
+import javax.swing.ImageIcon;
+import java.awt.Image;
 public class TCPClient {
     public static void main(String[] args) {
         String hostName = "localhost";
@@ -11,8 +14,33 @@ public class TCPClient {
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
         ) {
+
             Catalog catalog = (Catalog) in.readObject(); // Recibir el catálogo del servidor
-            System.out.println("Catálogo recibido del servidor: " + catalog);
+            ImageIcon ig = new ImageIcon("Imágenes/Designer.png");
+            Image igsize = ig.getImage();
+            Image newig = igsize.getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH);
+            ig = new ImageIcon(newig);
+            String subMenu = "1. Agregar al carro \n 2. Hacer pedido\n5. Salir";
+            //String opcionSubMenu = JOptionPane.showInputDialog(null, subMenu, "E-scom - Submenú", JOptionPane.PLAIN_MESSAGE, ig,null, null);
+            String opcionSubMenu = (String) JOptionPane.showInputDialog(null, subMenu, "E-scom - Submenú", JOptionPane.PLAIN_MESSAGE, ig,null, null);
+
+            switch (opcionSubMenu) {
+                case "1":
+                    StringBuilder catalogoMensaje = new StringBuilder("Catálogo de Productos:\n");
+                    for (Product product : catalog.getProducts()) {
+                        catalogoMensaje.append(product).append("\n");
+                    }
+                    String prodSeleccionado =  JOptionPane.showInputDialog(null, catalogoMensaje.toString(), "E-scom - Catálogo \n Escoge un producto:", JOptionPane.PLAIN_MESSAGE);
+                    break;
+                case "2":
+                    //blablabla
+                    break;
+                default:
+
+                    break;
+
+            }
+
 
             // Modificar el catálogo (por ejemplo, actualizar la cantidad de un producto)
             if (!catalog.getProducts().isEmpty()) {
