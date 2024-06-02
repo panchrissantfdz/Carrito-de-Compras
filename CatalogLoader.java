@@ -28,10 +28,10 @@ public class CatalogLoader {
 
     public static Catalog loadCatalogManually() {
         Catalog catalog = new Catalog();
-        catalog.addProduct(new Product("Product1", "Description1", 10.99, 100,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Leche.jpg").getImage()));
-        catalog.addProduct(new Product("Product2", "Description2", 20.99, 50,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Leche.jpg").getImage()));
-        catalog.addProduct(new Product("Product3", "Description3", 30.99, 30,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Leche.jpg").getImage()));
-        catalog.addProduct(new Product("Product3", "Description3", 30.99, 30,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Leche.jpg").getImage()));
+        catalog.addProduct(new Product("Leche", "Description1", 10.99, 100,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Leche.jpg").getImage()));
+        catalog.addProduct(new Product("Cafe", "Description2", 20.99, 50,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Nescafe.jpg").getImage()));
+        catalog.addProduct(new Product("Gansito", "Description3", 30.99, 30,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Gansito.jpg").getImage()));
+        catalog.addProduct(new Product("Sabritas", "Description3", 30.99, 30,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Sabritas.jpg").getImage()));
         return catalog;
     }
 

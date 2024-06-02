@@ -1,9 +1,10 @@
 import java.io.*;
 import java.net.*;
-import javax.swing.ImageIcon;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TCPClient {
     public static void main(String[] args) {
@@ -15,8 +16,8 @@ public class TCPClient {
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
         ) {
-
-            Catalog catalog = (Catalog) in.readObject(); // Recibir el catálogo del servidor
+            // Recibir el catálogo del servidor
+            Catalog catalog = (Catalog) in.readObject();
 
             // Crear la ventana principal
             JFrame frame = new JFrame("E-scom");
@@ -30,6 +31,58 @@ public class TCPClient {
             JPanel catalogPanel = new JPanel();
             catalogPanel.setLayout(new GridLayout(0, 3)); // Grid layout with 3 columns
             JScrollPane catalogScrollPane = new JScrollPane(catalogPanel);
+
+            // Pestaña de Carrito
+            JPanel cartPanel = new JPanel();
+            cartPanel.setLayout(new BoxLayout(cartPanel, BoxLayout.Y_AXIS));
+            JScrollPane cartScrollPane = new JScrollPane(cartPanel);
+            tabbedPane.addTab("Carrito", cartScrollPane);
+
+            // Pestaña de Pedido
+            JPanel orderPanel = new JPanel();
+            orderPanel.setLayout(new BoxLayout(orderPanel, BoxLayout.Y_AXIS));
+            JScrollPane orderScrollPane = new JScrollPane(orderPanel);
+            tabbedPane.addTab("Pedido", orderScrollPane);
+
+            // Mapa para almacenar los productos en el carrito y sus cantidades
+            Map<Product, Integer> cart = new HashMap<>();
+
+            // Botón de comprar
+            JButton buyButton = new JButton("Comprar");
+            buyButton.setVisible(false); // Inicialmente oculto
+
+            buyButton.addActionListener(e -> {
+                for (Map.Entry<Product, Integer> entry : cart.entrySet()) {
+                    Product cartProduct = entry.getKey();
+                    int cartQuantity = entry.getValue();
+
+                    // Actualizar la cantidad en el catálogo
+                    for (Product product : catalog.getProducts()) {
+                        if (product.equals(cartProduct)) {
+                            product.setQuantity(product.getQuantity() - cartQuantity);
+                            break;
+                        }
+                    }
+                }
+
+                try {
+                    // Enviar el catálogo actualizado al servidor
+                    out.writeObject(catalog);
+                    out.flush();
+
+                    JOptionPane.showMessageDialog(frame, "Compra realizada con éxito.");
+                    cart.clear();
+                    cartPanel.removeAll();
+                    cartPanel.revalidate();
+                    cartPanel.repaint();
+                    buyButton.setVisible(false); // Ocultar el botón después de la compra
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(frame, "Error al enviar el catálogo actualizado.", "Error", JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace();
+                }
+            });
+
+            cartPanel.add(buyButton);
 
             for (Product product : catalog.getProducts()) {
                 JPanel productPanel = new JPanel();
@@ -62,7 +115,50 @@ public class TCPClient {
                         try {
                             int cantidad = Integer.parseInt(cantidadStr.trim());
                             if (cantidad <= product.getQuantity() && cantidad > 0) {
-                                // Aquí se podría agregar la lógica para añadir el producto al carrito
+                                // Añadir el producto al carrito
+                                cart.put(product, cart.getOrDefault(product, 0) + cantidad);
+
+                                // Actualizar la pestaña del carrito
+                                cartPanel.removeAll();
+                                for (Map.Entry<Product, Integer> entry : cart.entrySet()) {
+                                    Product cartProduct = entry.getKey();
+                                    int cartQuantity = entry.getValue();
+
+                                    JPanel cartProductPanel = new JPanel();
+                                    cartProductPanel.setLayout(new GridBagLayout());
+                                    GridBagConstraints cartGbc = new GridBagConstraints();
+                                    cartGbc.gridx = 0;
+                                    cartGbc.gridy = 0;
+                                    cartGbc.insets = new Insets(5, 5, 5, 5);
+                                    cartGbc.anchor = GridBagConstraints.CENTER;
+
+                                    JLabel cartNameLabel = new JLabel(cartProduct.getName(), SwingConstants.CENTER);
+                                    JLabel cartQuantityLabel = new JLabel("Cantidad: " + cartQuantity, SwingConstants.CENTER);
+                                    JLabel cartPriceLabel = new JLabel(String.format("$%.2f", cartProduct.getPrice()), SwingConstants.CENTER);
+
+                                    ImageIcon cartIcon = cartProduct.getImageIcon();
+                                    Image cartImage = cartIcon.getImage();
+                                    Image scaledCartImage = cartImage.getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH);
+                                    ImageIcon cartIcon2 = new ImageIcon(scaledCartImage);
+                                    JLabel cartImageLabel = new JLabel(cartIcon2);
+
+                                    cartGbc.gridy = 0;
+                                    cartProductPanel.add(cartNameLabel, cartGbc);
+                                    cartGbc.gridy = 1;
+                                    cartProductPanel.add(cartImageLabel, cartGbc);
+                                    cartGbc.gridy = 2;
+                                    cartProductPanel.add(cartQuantityLabel, cartGbc);
+                                    cartGbc.gridy = 3;
+                                    cartProductPanel.add(cartPriceLabel, cartGbc);
+
+                                    cartPanel.add(cartProductPanel);
+                                }
+
+                                cartPanel.add(buyButton); // Asegurar que el botón de comprar esté al final
+                                buyButton.setVisible(true); // Mostrar el botón
+                                cartPanel.revalidate();
+                                cartPanel.repaint();
+
                                 JOptionPane.showMessageDialog(frame, "Producto añadido al carrito.");
                             } else {
                                 JOptionPane.showMessageDialog(frame, "Cantidad inválida.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -87,30 +183,9 @@ public class TCPClient {
 
             tabbedPane.addTab("Catálogo", catalogScrollPane);
 
-            // Pestaña de Carrito
-            JPanel cartPanel = new JPanel();
-            cartPanel.setLayout(new BoxLayout(cartPanel, BoxLayout.Y_AXIS));
-            JScrollPane cartScrollPane = new JScrollPane(cartPanel);
-            tabbedPane.addTab("Carrito", cartScrollPane);
-
-            // Pestaña de Pedido
-            JPanel orderPanel = new JPanel();
-            orderPanel.setLayout(new BoxLayout(orderPanel, BoxLayout.Y_AXIS));
-            JScrollPane orderScrollPane = new JScrollPane(orderPanel);
-            tabbedPane.addTab("Pedido", orderScrollPane);
-
             frame.getContentPane().add(tabbedPane);
             frame.setVisible(true);
 
-            // Modificar el catálogo (por ejemplo, actualizar la cantidad de un producto)
-            if (!catalog.getProducts().isEmpty()) {
-                catalog.getProducts().get(0).setQuantity(80);
-            }
-
-            out.writeObject(catalog); // Enviar el catálogo modificado al servidor
-            out.flush();
-
-            System.out.println("Catálogo enviado de vuelta al servidor: " + catalog);
         } catch (UnknownHostException e) {
             System.err.println("Host desconocido: " + hostName);
             e.printStackTrace();
