@@ -46,8 +46,8 @@ public class TCPClient {
                         JLabel nameLabel = new JLabel(product.toString());
                         Image image = icon.getImage();
                         Image scaledImage = image.getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH);
-                        ImageIcon icon = new ImageIcon(scaledImage);
-                        JLabel imageLabel = new JLabel(icon);
+                        ImageIcon icon2 = new ImageIcon(scaledImage);
+                        JLabel imageLabel = new JLabel(icon2);
 
                         productPanel.add(nameLabel, BorderLayout.NORTH);
                         productPanel.add(imageLabel, BorderLayout.CENTER);
