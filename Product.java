@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import javax.swing.ImageIcon;
 
 public class Product implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -6,12 +7,14 @@ public class Product implements Serializable {
     private String description;
     private double price;
     private int quantity;
+    public ImageIcon image;
 
-    public Product(String name, String description, double price, int quantity) {
+    public Product(String name, String description, double price, int quantity, Image ImagePath) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.quantity = quantity;
+        this.image = new ImageIcon(ImagePath);
     }
 
     public String getName() {
@@ -45,6 +48,8 @@ public class Product implements Serializable {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
+    public ImageIcon getImageIcon() {return image; }
 
     @Override
     public String toString() {
