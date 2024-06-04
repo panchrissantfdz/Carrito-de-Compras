@@ -18,7 +18,8 @@ public class TCPClient {
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
         ) {
             // Recibir el catálogo del servidor
-            Catalog catalog = (Catalog) in.readObject();
+            Catalog[] catalogWrapper = new Catalog[1];
+            catalogWrapper[0] = (Catalog) in.readObject();
 
             // Crear la ventana principal
             JFrame frame = new JFrame("E-scom");
@@ -53,12 +54,22 @@ public class TCPClient {
             buyButton.setVisible(false); // Inicialmente oculto
 
             buyButton.addActionListener(e -> {
+                StringBuilder ticket = new StringBuilder();
+                double total = 0.0;
+
+                ticket.append("Ticket de Compra:\n\n");
+                ticket.append(String.format("%-20s %-10s %-10s %-10s\n", "Producto", "Precio", "Cantidad", "Subtotal"));
+
                 for (Map.Entry<Product, Integer> entry : cart.entrySet()) {
                     Product cartProduct = entry.getKey();
                     int cartQuantity = entry.getValue();
+                    double subtotal = cartProduct.getPrice() * cartQuantity;
+
+                    ticket.append(String.format("%-20s $%-9.2f %-10d $%-9.2f\n", cartProduct.getName(), cartProduct.getPrice(), cartQuantity, subtotal));
+                    total += subtotal;
 
                     // Actualizar la cantidad en el catálogo
-                    for (Product product : catalog.getProducts()) {
+                    for (Product product : catalogWrapper[0].getProducts()) {
                         if (product.equals(cartProduct)) {
                             product.setQuantity(product.getQuantity() - cartQuantity);
                             break;
@@ -66,9 +77,11 @@ public class TCPClient {
                     }
                 }
 
+                ticket.append("\nTotal: $" + total);
+
                 try {
                     // Enviar el catálogo actualizado al servidor
-                    out.writeObject(catalog);
+                    out.writeObject(catalogWrapper[0]);
                     out.flush();
 
                     JOptionPane.showMessageDialog(frame, "Compra realizada con éxito.");
@@ -77,6 +90,31 @@ public class TCPClient {
                     cartPanel.revalidate();
                     cartPanel.repaint();
                     buyButton.setVisible(false); // Ocultar el botón después de la compra
+
+                    // Mostrar el ticket en la pestaña de Pedido
+                    orderPanel.removeAll();
+                    JTextArea ticketArea = new JTextArea(ticket.toString());
+                    ticketArea.setEditable(false);
+                    orderPanel.add(new JScrollPane(ticketArea));
+
+                    // Botón para descargar el ticket
+                    JButton downloadButton = new JButton("Descargar Ticket");
+                    downloadButton.addActionListener(d -> {
+                        JFileChooser fileChooser = new JFileChooser();
+                        if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+                            File file = fileChooser.getSelectedFile();
+                            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                                writer.write(ticket.toString());
+                                JOptionPane.showMessageDialog(frame, "Ticket descargado con éxito.");
+                            } catch (IOException ex) {
+                                JOptionPane.showMessageDialog(frame, "Error al guardar el ticket.", "Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    });
+
+                    orderPanel.add(downloadButton);
+                    orderPanel.revalidate();
+                    orderPanel.repaint();
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(frame, "Error al enviar el catálogo actualizado.", "Error", JOptionPane.ERROR_MESSAGE);
                     ex.printStackTrace();
@@ -85,7 +123,7 @@ public class TCPClient {
 
             cartPanel.add(buyButton);
 
-            for (Product product : catalog.getProducts()) {
+            for (Product product : catalogWrapper[0].getProducts()) {
                 JPanel productPanel = new JPanel();
                 productPanel.setLayout(new GridBagLayout());
                 GridBagConstraints gbc = new GridBagConstraints();
@@ -200,11 +238,125 @@ public class TCPClient {
                 }
             });
 
+            // Escuchar actualizaciones del servidor en un hilo separado
+            new Thread(() -> {
+                try {
+                    while (true) {
+                        Catalog updatedCatalog = (Catalog) in.readObject();
+                        catalogWrapper[0] = updatedCatalog;
+                        SwingUtilities.invokeLater(() -> {
+                            catalogPanel.removeAll();
+                            for (Product product : catalogWrapper[0].getProducts()) {
+                                JPanel productPanel = new JPanel();
+                                productPanel.setLayout(new GridBagLayout());
+                                GridBagConstraints gbc = new GridBagConstraints();
+                                gbc.gridx = 0;
+                                gbc.gridy = 0;
+                                gbc.insets = new Insets(5, 5, 5, 5);
+                                gbc.anchor = GridBagConstraints.CENTER;
+
+                                JLabel nameLabel = new JLabel(product.getName(), SwingConstants.CENTER);
+                                JLabel priceLabel = new JLabel(String.format("$%.2f", product.getPrice()), SwingConstants.CENTER);
+
+                                ImageIcon icon = product.getImageIcon();
+                                Image image = icon.getImage();
+                                Image scaledImage = image.getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH);
+                                ImageIcon icon2 = new ImageIcon(scaledImage);
+                                JLabel imageLabel = new JLabel(icon2);
+
+                                JButton addToCartButton = new JButton("Agregar al carrito");
+                                addToCartButton.addActionListener(e -> {
+                                    String cantidadStr = JOptionPane.showInputDialog(
+                                        frame,
+                                        "Cantidad en existencia: " + product.getQuantity() + "\nIngrese la cantidad a agregar:",
+                                        "Agregar al carrito",
+                                        JOptionPane.PLAIN_MESSAGE
+                                    );
+
+                                    if (cantidadStr != null && !cantidadStr.trim().isEmpty()) {
+                                        try {
+                                            int cantidad = Integer.parseInt(cantidadStr.trim());
+                                            if (cantidad <= product.getQuantity() && cantidad > 0) {
+                                                // Añadir el producto al carrito
+                                                cart.put(product, cart.getOrDefault(product, 0) + cantidad);
+
+                                                // Actualizar la pestaña del carrito
+                                                cartPanel.removeAll();
+                                                for (Map.Entry<Product, Integer> entry : cart.entrySet()) {
+                                                    Product cartProduct = entry.getKey();
+                                                    int cartQuantity = entry.getValue();
+
+                                                    JPanel cartProductPanel = new JPanel();
+                                                    cartProductPanel.setLayout(new GridBagLayout());
+                                                    GridBagConstraints cartGbc = new GridBagConstraints();
+                                                    cartGbc.gridx = 0;
+                                                    cartGbc.gridy = 0;
+                                                    cartGbc.insets = new Insets(5, 5, 5, 5);
+                                                    cartGbc.anchor = GridBagConstraints.CENTER;
+
+                                                    JLabel cartNameLabel = new JLabel(cartProduct.getName(), SwingConstants.CENTER);
+                                                    JLabel cartQuantityLabel = new JLabel("Cantidad: " + cartQuantity, SwingConstants.CENTER);
+                                                    JLabel cartPriceLabel = new JLabel(String.format("$%.2f", cartProduct.getPrice()), SwingConstants.CENTER);
+
+                                                    ImageIcon cartIcon = cartProduct.getImageIcon();
+                                                    Image cartImage = cartIcon.getImage();
+                                                    Image scaledCartImage = cartImage.getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH);
+                                                    ImageIcon cartIcon2 = new ImageIcon(scaledCartImage);
+                                                    JLabel cartImageLabel = new JLabel(cartIcon2);
+
+                                                    cartGbc.gridy = 0;
+                                                    cartProductPanel.add(cartNameLabel, cartGbc);
+                                                    cartGbc.gridy = 1;
+                                                    cartProductPanel.add(cartImageLabel, cartGbc);
+                                                    cartGbc.gridy = 2;
+                                                    cartProductPanel.add(cartQuantityLabel, cartGbc);
+                                                    cartGbc.gridy = 3;
+                                                    cartProductPanel.add(cartPriceLabel, cartGbc);
+
+                                                    cartPanel.add(cartProductPanel);
+                                                }
+
+                                                cartPanel.add(buyButton); // Asegurar que el botón de comprar esté al final
+                                                buyButton.setVisible(true); // Mostrar el botón
+                                                cartPanel.revalidate();
+                                                cartPanel.repaint();
+
+                                                JOptionPane.showMessageDialog(frame, "Producto añadido al carrito.");
+                                            } else {
+                                                JOptionPane.showMessageDialog(frame, "Cantidad inválida.", "Error", JOptionPane.ERROR_MESSAGE);
+                                            }
+                                        } catch (NumberFormatException ex) {
+                                            JOptionPane.showMessageDialog(frame, "Entrada no válida.", "Error", JOptionPane.ERROR_MESSAGE);
+                                        }
+                                    }
+                                });
+
+                                gbc.gridy = 0;
+                                productPanel.add(nameLabel, gbc);
+                                gbc.gridy = 1;
+                                productPanel.add(imageLabel, gbc);
+                                gbc.gridy = 2;
+                                productPanel.add(priceLabel, gbc);
+                                gbc.gridy = 3;
+                                productPanel.add(addToCartButton, gbc);
+
+                                catalogPanel.add(productPanel);
+                            }
+                            catalogPanel.revalidate();
+                            catalogPanel.repaint();
+                        });
+                    }
+                } catch (IOException | ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+            }).start();
+
+            frame.setVisible(true);
+
             // Mantener el cliente vivo
             while (true) {
                 Thread.sleep(1000); // Esperar un segundo antes de verificar de nuevo
             }
-
         } catch (UnknownHostException e) {
             System.err.println("Host desconocido: " + hostName);
             e.printStackTrace();
