@@ -43,19 +43,24 @@ public class TCPServer {
                 out.writeObject(catalog); // Enviar el catálogo al cliente
                 out.flush();
 
-                // Esperar el catálogo modificado del cliente
-                Catalog modifiedCatalog = (Catalog) in.readObject();
-                synchronized (catalog) {
-                    catalog = modifiedCatalog; // Actualizar el catálogo del servidor
-                    CatalogLoader.saveCatalogToFile(catalog, "catalog.txt"); // Guardar el catálogo actualizado
+                while (true) {
+                    Object input = in.readObject();
+                    if (input instanceof Catalog) {
+                        Catalog modifiedCatalog = (Catalog) input;
+                        synchronized (catalog) {
+                            catalog = modifiedCatalog; // Actualizar el catálogo del servidor
+                            CatalogLoader.saveCatalogToFile(catalog, "catalog.txt"); // Guardar el catálogo actualizado
+                        }
+                        System.out.println("Catálogo actualizado: " + catalog);
+                    } else if (input instanceof String && "exit".equals(input)) {
+                        break;
+                    }
                 }
-
-                System.out.println("Catálogo actualizado: " + catalog);
             } catch (SocketException e) {
                 System.out.println("Cliente desconectado: " + clientSocket.getInetAddress().getHostAddress());
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 try {
                     if (clientSocket != null && !clientSocket.isClosed()) {
                         clientSocket.close();

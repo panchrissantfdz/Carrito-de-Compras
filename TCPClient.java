@@ -2,7 +2,8 @@ import java.io.*;
 import java.net.*;
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -186,6 +187,24 @@ public class TCPClient {
             frame.getContentPane().add(tabbedPane);
             frame.setVisible(true);
 
+            // Mantener la conexión abierta mientras la ventana esté abierta
+            frame.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    try {
+                        // Enviar mensaje de cierre de sesión al servidor
+                        out.writeObject("exit");
+                        out.flush();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+
+            // Mantener el cliente vivo
+            while (true) {
+                Thread.sleep(1000); // Esperar un segundo antes de verificar de nuevo
+            }
+
         } catch (UnknownHostException e) {
             System.err.println("Host desconocido: " + hostName);
             e.printStackTrace();
@@ -193,6 +212,8 @@ public class TCPClient {
             System.err.println("No se pudo obtener E/S para la conexión a " + hostName);
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
