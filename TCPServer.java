@@ -48,6 +48,7 @@ public class TCPServer {
                 synchronized (clientOutputs) {
                     clientOutputs.add(out);
                 }
+                
                 out.writeObject(catalog); // Enviar el catálogo al cliente
                 out.flush();
 
