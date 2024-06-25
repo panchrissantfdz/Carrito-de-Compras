@@ -1,5 +1,4 @@
 import java.io.*;
-
 import javax.swing.ImageIcon;
 
 
@@ -28,10 +27,17 @@ public class CatalogLoader {
 
     public static Catalog loadCatalogManually() {
         Catalog catalog = new Catalog();
-        catalog.addProduct(new Product("Leche", "Description1", 10.99, 100,new ImageIcon("C:\\Users\\kevin\\Documents\\GitHub\\Carrito-de-Compras\\Imágenes\\Leche.jpg").getImage()));
-        catalog.addProduct(new Product("Cafe", "Description2", 20.99, 50,new ImageIcon("C:\\Users\\kevin\\Documents\\GitHub\\Carrito-de-Compras\\Imágenes\\Nescafe.jpg").getImage()));
-        catalog.addProduct(new Product("Gansito", "Description3", 30.99, 30,new ImageIcon("C:\\Users\\kevin\\Documents\\GitHub\\Carrito-de-Compras\\Imágenes\\Gansito.jpg").getImage()));
-        catalog.addProduct(new Product("Sabritas", "Description3", 30.99, 30,new ImageIcon("C:\\Users\\kevin\\Documents\\GitHub\\Carrito-de-Compras\\Imágenes\\Sabritas.jpg").getImage()));
+
+
+        catalog.addProduct(new Product("Leche", "Producto lacteo", 10.99, 100,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Leche.jpg").getImage()));
+        catalog.addProduct(new Product("Cafe", "Produducto con cafeina", 20.99, 50,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Nescafe.jpg").getImage()));
+        catalog.addProduct(new Product("Gansito", "Dulce", 30.99, 30,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Gansito.jpg").getImage()));
+        catalog.addProduct(new Product("Sabritas", "Botana", 25.99, 30,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Sabritas.jpg").getImage()));
+        catalog.addProduct(new Product("Corona", "Producto alçoholico", 25.69, 30,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Corona.jpg").getImage()));
+        catalog.addProduct(new Product("Doritos", "Botana", 25.99, 30,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Doritos.jpg").getImage()));
+        catalog.addProduct(new Product("Pepsi", "Refresco", 25.99, 30,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Pepsi.jpeg").getImage()));
+        catalog.addProduct(new Product("Chips", "Botana", 25.99, 30,new ImageIcon("C:\\Users\\chequ\\OneDrive\\Desktop\\carrito\\Carrito-de-Compras\\Imágenes\\Chips.jpg").getImage()));
+
         return catalog;
     }
 

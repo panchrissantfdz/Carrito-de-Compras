@@ -23,6 +23,12 @@ public class Catalog implements Serializable {
         products.add(product);
     }
 
+    public void removeProduct(Product product) {
+        products.remove(product);
+    }
+
+
+    
     @Override
     public String toString() {
         return "Catalog{" +
