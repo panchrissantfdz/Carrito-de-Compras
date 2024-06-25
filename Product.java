@@ -50,7 +50,7 @@ public class Product implements Serializable {
         this.quantity = quantity;
     }
 
-    public ImageIcon getImageIcon() {return image; }
+    public ImageIcon getImageIcon() {return this.image; }
 
     @Override
     public String toString() {
